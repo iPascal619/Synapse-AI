@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 84% 4.9%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 94.1%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .fraud-status-high {
+    @apply bg-red-100 text-red-800 border-red-200 px-3 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .fraud-status-medium {
+    @apply bg-orange-100 text-orange-800 border-orange-200 px-3 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .fraud-status-low {
+    @apply bg-green-100 text-green-800 border-green-200 px-3 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .transaction-card {
+    @apply bg-white rounded-lg border border-gray-200 p-6 shadow-md hover:shadow-lg transition-all duration-300;
+  }
+  
+  .metric-card {
+    @apply bg-white rounded-lg border border-gray-200 p-6 shadow-md hover:shadow-lg transition-all duration-300;
+  }
+
+  .metric-value {
+    @apply text-3xl font-bold text-gray-900 mb-2;
+  }
+
+  .metric-label {
+    @apply text-sm text-gray-600 font-medium uppercase tracking-wide;
+  }
+
+  .metric-change {
+    @apply text-xs font-semibold px-2 py-1 rounded-full;
+  }
+
+  .metric-change.positive {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .metric-change.negative {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .dashboard-container {
+    @apply min-h-screen bg-gray-50 p-6;
+  }
+
+  .dashboard-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8;
+  }
+
+  .dashboard-header {
+    @apply flex justify-between items-center mb-8;
+  }
+
+  .dashboard-title {
+    @apply text-3xl font-bold text-gray-900;
+  }
+
+  .chart-container {
+    @apply bg-white shadow-lg rounded-lg p-6 border border-gray-200 mb-6;
+  }
+
+  .table-container {
+    @apply bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200;
+  }
+
+  .table-header {
+    @apply bg-gray-50 px-6 py-3 border-b border-gray-200 font-semibold text-gray-900;
+  }
+
+  .table-row {
+    @apply px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors;
+  }
+
+  .alert-container {
+    @apply bg-red-50 border border-red-200 rounded-lg p-4 mb-6;
+  }
+
+  .alert-text {
+    @apply text-red-800 font-medium;
+  }
+
+  .loading-spinner {
+    @apply animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+
+  .status-badge {
+    @apply px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide;
+  }
+
+  .status-badge.normal {
+    @apply bg-green-100 text-green-800 border border-green-200;
+  }
+
+  .status-badge.suspicious {
+    @apply bg-yellow-100 text-yellow-800 border border-yellow-200;
+  }
+
+  .status-badge.fraud {
+    @apply bg-red-100 text-red-800 border border-red-200;
+  }
+
+  .transaction-amount {
+    @apply font-semibold text-lg;
+  }
+
+  .transaction-amount.normal {
+    @apply text-green-600;
+  }
+
+  .transaction-amount.suspicious {
+    @apply text-yellow-600;
+  }
+
+  .transaction-amount.fraud {
+    @apply text-red-600;
+  }
+
+  .transaction-header {
+    @apply flex justify-between items-center mb-3;
+  }
+
+  .transaction-id {
+    @apply font-mono text-sm text-gray-600;
+  }
+}

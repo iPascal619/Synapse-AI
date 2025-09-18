@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Simple test to ensure CSS is loading */
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Basic utility classes */
+.test-red {
+  background-color: red !important;
+  color: white !important;
+  padding: 1rem !important;
+}

@@ -1,0 +1,302 @@
+{
+  "annotations": [
+    {
+      "name": "Fraud Rate Alert",
+      "datasource": "prometheus",
+      "enable": true,
+      "iconColor": "red",
+      "query": "sum(increase(fraud_decisions_total{decision=\"fraud\"}[5m])) / sum(increase(fraud_decisions_total[5m])) > 0.05"
+    },
+    {
+      "name": "High API Latency",
+      "datasource": "prometheus", 
+      "enable": true,
+      "iconColor": "yellow",
+      "query": "histogram_quantile(0.99, fraud_detection_request_duration_seconds_bucket) > 0.1"
+    },
+    {
+      "name": "Model Accuracy Drop",
+      "datasource": "prometheus",
+      "enable": true,
+      "iconColor": "orange", 
+      "query": "fraud_model_accuracy < 0.9"
+    }
+  ],
+  "dashboard": {
+    "id": null,
+    "title": "Fraud Detection System Dashboard",
+    "tags": ["fraud", "ml", "monitoring"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Transaction Volume",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(transactions_processed_total[5m]))",
+            "legendFormat": "Transactions/sec"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Transactions per second",
+            "min": 0
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Fraud Detection Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(fraud_decisions_total{decision=\"fraud\"}[5m])) / sum(rate(fraud_decisions_total[5m]))",
+            "legendFormat": "Fraud Rate"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Fraud Rate",
+            "min": 0,
+            "max": 1
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [0.05],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A", "5m", "now"]
+              },
+              "reducer": {
+                "type": "last"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "2m",
+          "frequency": "10s",
+          "handler": 1,
+          "name": "High Fraud Rate Alert",
+          "noDataState": "no_data",
+          "notifications": []
+        }
+      },
+      {
+        "id": 3,
+        "title": "API Response Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, fraud_detection_request_duration_seconds_bucket)",
+            "legendFormat": "50th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.95, fraud_detection_request_duration_seconds_bucket)",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.99, fraud_detection_request_duration_seconds_bucket)",
+            "legendFormat": "99th percentile"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Response time (seconds)",
+            "min": 0
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "thresholds": [
+          {
+            "value": 0.1,
+            "colorMode": "critical",
+            "op": "gt"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Model Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "fraud_model_accuracy",
+            "legendFormat": "Model Accuracy"
+          },
+          {
+            "expr": "fraud_model_precision",
+            "legendFormat": "Precision"
+          },
+          {
+            "expr": "fraud_model_recall",
+            "legendFormat": "Recall"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Score",
+            "min": 0,
+            "max": 1
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      },
+      {
+        "id": 5,
+        "title": "Feature Engineering Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, feature_engineering_duration_seconds_bucket)",
+            "legendFormat": "95th percentile latency"
+          },
+          {
+            "expr": "rate(feature_engineering_errors_total[5m])",
+            "legendFormat": "Error rate"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        }
+      },
+      {
+        "id": 6,
+        "title": "Data Pipeline Health",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "kafka_consumer_lag_avg",
+            "legendFormat": "Kafka Consumer Lag"
+          },
+          {
+            "expr": "redis_connected_clients",
+            "legendFormat": "Redis Connections"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        }
+      },
+      {
+        "id": 7,
+        "title": "System Resources",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(container_cpu_usage_seconds_total[5m]) * 100",
+            "legendFormat": "CPU Usage %"
+          },
+          {
+            "expr": "(container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100",
+            "legendFormat": "Memory Usage %"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 24
+        }
+      },
+      {
+        "id": 8,
+        "title": "Error Rate",
+        "type": "singlestat",
+        "targets": [
+          {
+            "expr": "sum(rate(fraud_detection_errors_total[5m]))",
+            "legendFormat": "Errors/sec"
+          }
+        ],
+        "valueName": "current",
+        "colorBackground": true,
+        "thresholds": "0,1,5",
+        "colors": ["green", "yellow", "red"],
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 32
+        }
+      },
+      {
+        "id": 9,
+        "title": "Throughput",
+        "type": "singlestat",
+        "targets": [
+          {
+            "expr": "sum(rate(fraud_decisions_total[5m]))",
+            "legendFormat": "Decisions/sec"
+          }
+        ],
+        "valueName": "current",
+        "unit": "reqps",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 32
+        }
+      },
+      {
+        "id": 10,
+        "title": "Model Confidence",
+        "type": "histogram",
+        "targets": [
+          {
+            "expr": "fraud_score_distribution_bucket",
+            "legendFormat": "Score Distribution"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 32
+        }
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "5s"
+  }
+}

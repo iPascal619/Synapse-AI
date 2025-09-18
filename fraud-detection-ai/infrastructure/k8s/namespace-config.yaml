@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fraud-detection
+  labels:
+    name: fraud-detection
+    environment: production
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fraud-detection-config
+  namespace: fraud-detection
+data:
+  # Redis configuration
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+  
+  # Kafka configuration
+  KAFKA_BOOTSTRAP_SERVERS: "kafka-service:9092"
+  KAFKA_CONSUMER_GROUP_ID: "fraud-detection"
+  
+  # Model configuration
+  MODEL_PATH: "/app/models"
+  MODEL_INFERENCE_TIMEOUT: "100"
+  
+  # Feature engineering configuration
+  FEATURE_PROCESSING_TIMEOUT: "50"
+  MIN_SAMPLES_FOR_DETECTION: "1000"
+  
+  # API configuration
+  API_RATE_LIMIT: "10000"
+  API_TIMEOUT: "30"
+  
+  # Monitoring configuration
+  PROMETHEUS_ENABLED: "true"
+  LOG_LEVEL: "INFO"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fraud-detection-secrets
+  namespace: fraud-detection
+type: Opaque
+data:
+  # Base64 encoded secrets
+  DATABASE_URL: cG9zdGdyZXNxbDovL2ZyYXVkX3VzZXI6ZnJhdWRfcGFzc3dvcmRAcG9zdGdyZXM6NTQzMi9mcmF1ZF9kZXRlY3Rpb24=
+  API_SECRET_KEY: c3VwZXJfc2VjcmV0X2tleV9mb3JfYXBpX3NpZ25pbmc=
+  MLFLOW_TRACKING_URI: c3FsaXRlOi8vL21sZmxvdy5kYg==

@@ -1,0 +1,109 @@
+groups:
+- name: fraud_detection_alerts
+  rules:
+  # High fraud rate alert
+  - alert: HighFraudRate
+    expr: rate(fraud_decisions_total{decision="DENY"}[5m]) > 0.1
+    for: 2m
+    labels:
+      severity: critical
+      service: fraud-detection
+    annotations:
+      summary: "High fraud rate detected"
+      description: "Fraud rate is {{ $value | humanizePercentage }} which is above the 10% threshold"
+
+  # High API response time
+  - alert: HighAPIResponseTime
+    expr: histogram_quantile(0.95, rate(fraud_api_request_duration_seconds_bucket[5m])) > 0.1
+    for: 2m
+    labels:
+      severity: warning
+      service: fraud-api
+    annotations:
+      summary: "High API response time"
+      description: "95th percentile response time is {{ $value }}s which is above 100ms threshold"
+
+  # Low model accuracy
+  - alert: ModelAccuracyDegraded
+    expr: fraud_model_accuracy < 0.9
+    for: 5m
+    labels:
+      severity: critical
+      service: ml-model
+    annotations:
+      summary: "Model accuracy degraded"
+      description: "Model accuracy is {{ $value | humanizePercentage }} which is below 90% threshold"
+
+  # High error rate
+  - alert: HighErrorRate
+    expr: rate(fraud_api_requests_total{status=~"5.."}[5m]) / rate(fraud_api_requests_total[5m]) > 0.05
+    for: 2m
+    labels:
+      severity: critical
+      service: fraud-api
+    annotations:
+      summary: "High error rate"
+      description: "Error rate is {{ $value | humanizePercentage }} which is above 5% threshold"
+
+  # Service down
+  - alert: ServiceDown
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Service {{ $labels.job }} is down"
+      description: "Service {{ $labels.job }} has been down for more than 1 minute"
+
+  # Feature drift detected
+  - alert: FeatureDriftDetected
+    expr: fraud_feature_drift_ratio > 0.2
+    for: 5m
+    labels:
+      severity: warning
+      service: ml-model
+    annotations:
+      summary: "Feature drift detected"
+      description: "{{ $value | humanizePercentage }} of features show significant drift"
+
+  # High memory usage
+  - alert: HighMemoryUsage
+    expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.9
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High memory usage"
+      description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  # High CPU usage
+  - alert: HighCPUUsage
+    expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU usage"
+      description: "CPU usage is {{ $value }}% on {{ $labels.instance }}"
+
+  # Redis connection issues
+  - alert: RedisDown
+    expr: redis_up == 0
+    for: 1m
+    labels:
+      severity: critical
+      service: redis
+    annotations:
+      summary: "Redis is down"
+      description: "Redis instance {{ $labels.instance }} is down"
+
+  # Kafka lag
+  - alert: KafkaHighLag
+    expr: kafka_consumer_lag_sum > 10000
+    for: 5m
+    labels:
+      severity: warning
+      service: kafka
+    annotations:
+      summary: "Kafka consumer lag is high"
+      description: "Consumer lag is {{ $value }} messages"
